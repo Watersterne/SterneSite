@@ -7,7 +7,7 @@ echo   Deploy to GitHub  -^>  Cloudflare Pages
 echo ============================================
 echo.
 
-git rev-parse --is-inside-work-tree >/dev/null 2>&1
+git rev-parse --is-inside-work-tree >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Not a git repository yet.
     pause
