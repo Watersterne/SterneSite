@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文章标题 | 我的博客</title>
+    <title>文章 | 星网</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,13 +14,28 @@
                 <div class="profile-avatar">👨‍💻</div>
                 <h1 class="profile-name">汪泉</h1>
                 <p class="profile-desc">一个记录者而已......</p>
+                <div class="profile-tags">
+                    <span class="tag">#开发</span>
+                    <span class="tag">#随笔</span>
+                    <span class="tag">#读书</span>
+                </div>
             </div>
 
             <nav class="sidebar-nav">
                 <a href="index.html">🏠 首页</a>
-                <a href="posts.html">📝 文章</a>
+                <a href="posts.html" class="active">📝 文章</a>
                 <a href="about.html">🙋 关于</a>
             </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">分类</h3>
+                <div class="filter-tags">
+                    <button class="filter-btn active" data-tag="all">全部</button>
+                    <button class="filter-btn" data-tag="tech">技术</button>
+                    <button class="filter-btn" data-tag="life">生活</button>
+                    <button class="filter-btn" data-tag="reading">读书</button>
+                </div>
+            </div>
 
             <div class="sidebar-section">
                 <h3 class="sidebar-title">主题</h3>
@@ -35,11 +50,13 @@
 
         <!-- 主内容区 -->
         <main class="main">
-            <div class="container post-page">
-                <a href="posts.html" class="back-link">← 返回文章列表</a>
-                <article class="post-content" id="post-content">
-                    <!-- 由 JS 动态加载 -->
-                </article>
+            <div class="container">
+                <div class="section-header">
+                    <h2>📝 最新文章</h2>
+                </div>
+                <div class="post-grid" id="post-grid">
+                    <!-- 文章卡片由 JS 动态生成 -->
+                </div>
             </div>
         </main>
     </div>
