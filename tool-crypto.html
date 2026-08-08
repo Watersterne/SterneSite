@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加密解密 | 星网</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html">🏠 首页</a>
+                <a href="posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="container tool-page">
+                <div class="tool-header">
+                    <h2>加密解密</h2>
+                    <p>Base64、URL 编码互转，以及 MD5 / SHA-1 / SHA-256 哈希。全部在本地计算，内容不会上传。</p>
+                </div>
+
+                <div class="tool-panel" style="max-width: 720px;">
+                    <label class="tool-label">输入内容</label>
+                    <textarea class="tool-input" id="crypto-input" rows="5" placeholder="在这里粘贴要处理的文本..." spellcheck="false"></textarea>
+
+                    <div class="tool-row" style="margin-top: 16px;">
+                        <div>
+                            <label class="tool-label">操作</label>
+                            <select class="tool-select" id="crypto-mode">
+                                <option value="b64enc">Base64 编码</option>
+                                <option value="b64dec">Base64 解码</option>
+                                <option value="urlenc">URL 编码</option>
+                                <option value="urldec">URL 解码</option>
+                                <option value="md5">MD5 哈希</option>
+                                <option value="sha1">SHA-1 哈希</option>
+                                <option value="sha256">SHA-256 哈希</option>
+                            </select>
+                        </div>
+                        <div style="flex: 0 0 auto;">
+                            <button class="tool-btn" id="crypto-run">执行</button>
+                            <button class="tool-btn secondary" id="crypto-copy">复制结果</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-result" id="crypto-result"><span class="muted">结果将显示在这里</span></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/hash.js"></script>
+    <script src="js/crypto.js"></script>
+</body>
+</html>

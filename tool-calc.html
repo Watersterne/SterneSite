@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>关于我 | 我的博客</title>
+    <title>科学计算器 | 星网</title>
     <link rel="stylesheet" href="css/style.css">
     <script>
         if (localStorage.getItem('theme') === 'dark') {
@@ -13,7 +13,6 @@
 </head>
 <body>
     <div class="layout">
-        <!-- 侧边栏 -->
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
@@ -24,8 +23,8 @@
             <nav class="sidebar-nav">
                 <a href="index.html">🏠 首页</a>
                 <a href="posts.html">📝 文章</a>
-                <a href="tools.html">🧰 工具</a>
-                <a href="about.html" class="active">🙋 关于</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="about.html">🙋 关于</a>
             </nav>
 
             <div class="sidebar-section">
@@ -39,33 +38,34 @@
             </div>
         </aside>
 
-        <!-- 主内容区 -->
         <main class="main">
-            <div class="container about-page">
-                <div class="about-card">
-                    <h1>关于我</h1>
-                    <p class="about-desc">
-                        你好!我是WangQuan,喜欢用代码创造有趣的东西.
-                        这个博客谨用来记录...
-                    </p>
-                    <div class="about-info">
-                        <h3>🛠 技术栈</h3>
-                        <div class="skill-tags">
-                            <span class="skill">HTML/CSS</span>
-                            <span class="skill">JavaScript</span>
-                            <span class="skill">Vue.js</span>
-                            <span class="skill">Python</span>
-                            <span class="skill">Git</span>
-                        </div>
-                        <h3>📬 联系我</h3>
-                        <p>Email: 暂未公开</p>
-                        <p>GitHub: 暂未公开</p>
+            <div class="container tool-page">
+                <div class="tool-header">
+                    <h2>科学计算器</h2>
+                    <p>支持三角函数、对数、幂、开方与常数，可用键盘直接输入。</p>
+                </div>
+
+                <div class="tool-panel" style="max-width: 560px;">
+                    <div class="calc-display">
+                        <div class="calc-expr" id="calc-expr">&nbsp;</div>
+                        <div class="calc-value" id="calc-value">0</div>
                     </div>
+                    <div class="tool-row" style="margin-bottom: 14px;">
+                        <div>
+                            <label class="tool-label">角度单位</label>
+                            <select class="tool-select" id="calc-angle">
+                                <option value="deg">度 (DEG)</option>
+                                <option value="rad">弧度 (RAD)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="calc-keys" id="calc-keys"></div>
                 </div>
             </div>
         </main>
     </div>
 
     <script src="js/main.js"></script>
+    <script src="js/calc.js"></script>
 </body>
 </html>

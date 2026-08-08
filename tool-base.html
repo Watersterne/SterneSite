@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>进制转换 | 星网</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html">🏠 首页</a>
+                <a href="posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="container tool-page">
+                <div class="tool-header">
+                    <h2>进制转换</h2>
+                    <p>输入任意进制的整数，实时同步转换为其他进制。支持 2~36 进制。</p>
+                </div>
+
+                <div class="tool-panel" style="max-width: 620px;">
+                    <div class="tool-row">
+                        <div>
+                            <label class="tool-label">输入进制</label>
+                            <select class="tool-select" id="base-from">
+                                <option value="2">二进制 (2)</option>
+                                <option value="8">八进制 (8)</option>
+                                <option value="10" selected>十进制 (10)</option>
+                                <option value="16">十六进制 (16)</option>
+                            </select>
+                        </div>
+                        <div style="flex: 2;">
+                            <label class="tool-label">数值（可为负，十六进制可用 A-F）</label>
+                            <input type="text" class="tool-input" id="base-input" placeholder="例如：255 或 FF" autocomplete="off" spellcheck="false">
+                        </div>
+                    </div>
+
+                    <div class="tool-result" id="base-result">
+                        <span class="muted">输入数值后自动转换</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+    (function () {
+        'use strict';
+        const fromEl = document.getElementById('base-from');
+        const inputEl = document.getElementById('base-input');
+        const resultEl = document.getElementById('base-result');
+
+        function convert() {
+            const raw = inputEl.value.trim();
+            if (!raw) {
+                resultEl.innerHTML = '<span class="muted">输入数值后自动转换</span>';
+                return;
+            }
+            const base = parseInt(fromEl.value, 10);
+            let body = raw;
+            let neg = false;
+            if (body.startsWith('-')) { neg = true; body = body.slice(1); }
+            if (base === 16) body = body.replace(/^0[xX]/, '');
+            if (base === 2) body = body.replace(/^0[bB]/, '');
+            if (base === 8) body = body.replace(/^0[oO]/, '');
+
+            // 校验字符合法性
+            const digits = '0123456789abcdefghijklmnopqrstuvwxyz';
+            const valid = digits.slice(0, base);
+            if (!body || !body.toLowerCase().split('').every(c => valid.includes(c))) {
+                resultEl.innerHTML = '<span class="muted" style="color:#e05252;">含有该进制不允许的字符</span>';
+                return;
+            }
+
+            let n = parseInt(body, base);
+            if (isNaN(n)) {
+                resultEl.innerHTML = '<span class="muted" style="color:#e05252;">无法解析</span>';
+                return;
+            }
+            if (neg) n = -n;
+
+            const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+            resultEl.innerHTML =
+                '<div>二进制：<b>' + esc(n.toString(2)) + '</b></div>' +
+                '<div>八进制：<b>' + esc(n.toString(8)) + '</b></div>' +
+                '<div>十进制：<b>' + esc(n.toString(10)) + '</b></div>' +
+                '<div>十六进制：<b>' + esc(n.toString(16).toUpperCase()) + '</b></div>';
+        }
+
+        inputEl.addEventListener('input', convert);
+        fromEl.addEventListener('change', convert);
+    })();
+    </script>
+</body>
+</html>

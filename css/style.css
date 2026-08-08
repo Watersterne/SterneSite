@@ -7,6 +7,7 @@
     --accent: #4f46e5;
     --accent-light: #eef2ff;
     --border: #e5e7eb;
+    --card-bg: #ffffff;
     --card-shadow: 0 4px 20px rgba(0,0,0,0.06);
     --card-hover-shadow: 0 8px 40px rgba(0,0,0,0.12);
     --radius: 16px;
@@ -20,6 +21,7 @@
     --accent: #818cf8;
     --accent-light: #1e1b4b;
     --border: #2d3748;
+    --card-bg: #161632;
     --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
     --card-hover-shadow: 0 8px 40px rgba(0,0,0,0.5);
 }
@@ -473,3 +475,354 @@ a:hover { opacity: 0.8; }
 .post-card:nth-child(2) { animation-delay: 0.1s; }
 .post-card:nth-child(3) { animation-delay: 0.2s; }
 .post-card:nth-child(4) { animation-delay: 0.3s; }
+
+/* ========== 工具页通用 ========== */
+.tool-page { padding-top: 32px; }
+
+.tool-header {
+    margin-bottom: 28px;
+}
+
+.tool-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+}
+
+.tool-header p {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
+}
+
+.tool-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 26px 22px;
+    text-decoration: none;
+    color: var(--text);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.tool-card .tool-icon {
+    font-size: 2.1rem;
+    margin-bottom: 14px;
+}
+
+.tool-card h3 {
+    font-size: 1.08rem;
+    margin-bottom: 8px;
+}
+
+.tool-card p {
+    color: var(--text-secondary);
+    font-size: 0.86rem;
+    line-height: 1.6;
+}
+
+.tool-card:nth-child(2) { animation-delay: 0.08s; }
+.tool-card:nth-child(3) { animation-delay: 0.16s; }
+.tool-card:nth-child(4) { animation-delay: 0.24s; }
+
+/* 工具面板 */
+.tool-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+}
+
+.tool-label {
+    display: block;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.tool-input, .tool-select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.tool-input:focus, .tool-select:focus {
+    border-color: var(--accent);
+}
+
+.tool-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.tool-row > div { flex: 1; min-width: 160px; }
+
+.tool-btn {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+}
+
+.tool-btn:hover { opacity: 0.88; }
+.tool-btn:active { transform: scale(0.97); }
+
+.tool-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+.tool-result {
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    font-size: 1.05rem;
+    line-height: 1.8;
+    word-break: break-all;
+    min-height: 24px;
+}
+
+.tool-result .muted { color: var(--text-secondary); font-size: 0.88rem; }
+
+/* ========== 科学计算器 ========== */
+.calc-display {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    text-align: right;
+    margin-bottom: 16px;
+}
+
+.calc-expr {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    min-height: 20px;
+    word-break: break-all;
+}
+
+.calc-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    word-break: break-all;
+}
+
+.calc-keys {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.calc-key {
+    padding: 14px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: inherit;
+}
+
+.calc-key:hover { border-color: var(--accent); background: var(--bg-secondary); }
+
+.calc-key.op { color: var(--accent); font-weight: 600; }
+
+.calc-key.eq {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 700;
+}
+
+.calc-key.eq:hover { opacity: 0.88; }
+
+.calc-key.wide { grid-column: span 2; }
+
+.calc-error { color: #e05252; }
+
+/* ========== 上证指数 ========== */
+.stock-hero {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 34px 36px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stock-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.stock-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.stock-name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.stock-code {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    letter-spacing: 0.5px;
+}
+
+.stock-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.stock-price {
+    font-size: 3.4rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.stock-change {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-up { color: #e05252; }
+.stock-down { color: #22a06b; }
+
+.stock-time {
+    margin-top: 12px;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+}
+
+.stock-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+}
+
+.stat-card .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.stat-card .stat-value {
+    font-size: 1.12rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.stock-chart-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px 26px;
+}
+
+.chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.chart-head h3 { font-size: 1.02rem; }
+
+.chart-tabs { display: flex; gap: 8px; }
+
+.chart-tab {
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chart-tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.stock-chart { width: 100%; height: 320px; display: block; }
+
+.stock-source {
+    margin-top: 18px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+.stock-loading, .stock-error {
+    padding: 60px 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.stock-error { color: #e05252; }
+
+@media (max-width: 768px) {
+    .stock-price { font-size: 2.5rem; }
+    .stock-hero { padding: 26px 22px; }
+    .tool-panel { padding: 20px; }
+    .calc-keys { grid-template-columns: repeat(4, 1fr); }
+}

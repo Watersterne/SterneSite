@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上证指数 | 星网</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html">🏠 首页</a>
+                <a href="posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="container tool-page">
+                <div id="stock-loading" class="stock-loading">正在获取行情数据...</div>
+
+                <div id="stock-body" style="display: none;">
+                    <!-- 头部报价 -->
+                    <section class="stock-hero">
+                        <div class="stock-name-row">
+                            <span class="stock-name" id="stock-name">上证指数</span>
+                            <span class="stock-code">SH000001</span>
+                        </div>
+                        <div class="stock-price-row">
+                            <span class="stock-price" id="stock-price">--</span>
+                            <span class="stock-change" id="stock-change">--</span>
+                        </div>
+                        <div class="stock-time" id="stock-time"></div>
+                    </section>
+
+                    <!-- 关键指标 -->
+                    <section class="stock-stats">
+                        <div class="stat-card"><div class="stat-label">今开</div><div class="stat-value" id="stat-open">--</div></div>
+                        <div class="stat-card"><div class="stat-label">昨收</div><div class="stat-value" id="stat-prev">--</div></div>
+                        <div class="stat-card"><div class="stat-label">最高</div><div class="stat-value" id="stat-high">--</div></div>
+                        <div class="stat-card"><div class="stat-label">最低</div><div class="stat-value" id="stat-low">--</div></div>
+                        <div class="stat-card"><div class="stat-label">成交量</div><div class="stat-value" id="stat-vol">--</div></div>
+                        <div class="stat-card"><div class="stat-label">成交额</div><div class="stat-value" id="stat-amt">--</div></div>
+                    </section>
+
+                    <!-- 走势图 -->
+                    <section class="stock-chart-panel">
+                        <div class="chart-head">
+                            <h3>日K走势（收盘）</h3>
+                            <div class="chart-tabs">
+                                <button class="chart-tab active" data-range="30">近30日</button>
+                                <button class="chart-tab" data-range="90">近90日</button>
+                            </div>
+                        </div>
+                        <canvas id="stock-chart" class="stock-chart"></canvas>
+                    </section>
+
+                    <p class="stock-source">数据来源：公开财经行情接口 · 每 30 秒自动刷新 · 仅供参考</p>
+                </div>
+
+                <div id="stock-error" class="stock-error" style="display: none;">
+                    行情获取失败，请检查网络后刷新页面重试。
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/stock.js"></script>
+</body>
+</html>
