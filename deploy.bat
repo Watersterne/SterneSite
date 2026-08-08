@@ -1,56 +1,50 @@
 @echo off
-title 一键部署 - SterneSite
+title Deploy SterneSite
 cd /d "%~dp0"
 
-echo ========================================
-echo   一键部署到 GitHub + Cloudflare Pages
-echo ========================================
+echo ============================================
+echo   Deploy to GitHub  -^>  Cloudflare Pages
+echo ============================================
 echo.
 
-REM 检查是否为 git 仓库
 git rev-parse --is-inside-work-tree >/dev/null 2>&1
 if errorlevel 1 (
-    echo [错误] 当前目录还不是 git 仓库，请先完成初始化关联。
+    echo [ERROR] Not a git repository yet.
     pause
     exit /b 1
 )
 
-REM 暂存所有改动
 git add .
 
-REM 检查是否有实际改动
 git diff --cached --quiet
 if %errorlevel%==0 (
-    echo 没有检测到任何改动，无需部署。
+    echo No changes detected. Nothing to deploy.
     pause
     exit /b 0
 )
 
-REM 输入提交说明（留空则自动生成）
-set MSG=
-set /p MSG=请输入本次更新说明（直接回车自动生成）: 
+set MSG=%*
 if "%MSG%"=="" set MSG=update: %date% %time%
 
 git commit -m "%MSG%"
 if errorlevel 1 (
-    echo [错误] 提交失败，请检查上方报错信息。
+    echo [ERROR] git commit failed.
     pause
     exit /b 1
 )
 
 echo.
-echo 正在推送到 GitHub ...
+echo Pushing to GitHub ...
 git push origin HEAD
 if errorlevel 1 (
-    echo [错误] 推送失败，常见原因：网络问题 / 未登录 GitHub 账号。
+    echo [ERROR] git push failed. Check network / GitHub login.
     pause
     exit /b 1
 )
 
 echo.
-echo ========================================
-echo   推送成功！
-echo   Cloudflare Pages 会在 1-2 分钟内自动重新部署，
-echo   可去 Cloudflare 控制台查看部署进度。
-echo ========================================
+echo ============================================
+echo   Done! Cloudflare Pages will auto-redeploy
+echo   in 1-2 minutes. Check the CF dashboard.
+echo ============================================
 pause
