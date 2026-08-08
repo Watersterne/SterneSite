@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间支配 | 星网</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <style>
+        .time-card {
+            max-width: 660px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tc-head {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .tc-head h3 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+        }
+
+        .tc-head p {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* 印章 */
+        .stamp {
+            position: absolute;
+            right: 18px;
+            top: 14px;
+            width: 92px;
+            height: 92px;
+            border: 3px solid var(--accent);
+            color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            transform: rotate(-15deg);
+            opacity: 0.85;
+            animation: tc-stamp 0.35s ease-in;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        @keyframes tc-stamp {
+            from { transform: rotate(-15deg) scale(2.2); opacity: 0; }
+            to   { transform: rotate(-15deg) scale(1);   opacity: 0.85; }
+        }
+
+        /* 照片 + 信息 */
+        .tc-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tc-photo {
+            flex: 0 0 132px;
+            height: 198px;
+            border: 1px dashed var(--border);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .tc-photo:hover { border-color: var(--accent); }
+
+        .tc-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tc-fields {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tc-fields .f-line {
+            font-size: 1rem;
+            border-bottom: 1px dashed transparent;
+            outline: none;
+            min-height: 1.6em;
+        }
+
+        .tc-fields .f-line:hover,
+        .tc-fields .f-line:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        .tc-fields .f-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-right: 6px;
+        }
+
+        /* 时间区 */
+        .tc-section-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .tc-times {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .tc-times > div { flex: 1; min-width: 200px; }
+
+        .tc-status {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .tc-progress {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 22px;
+        }
+
+        .tc-progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--accent), #7c3aed);
+            transition: width 0.6s ease;
+        }
+
+        /* 底部 */
+        .tc-footer {
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tc-footer .f-item {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .tc-footer .f-item b {
+            color: var(--text);
+            font-weight: 500;
+            outline: none;
+            border-bottom: 1px dashed transparent;
+        }
+
+        .tc-footer .f-item b:hover,
+        .tc-footer .f-item b:focus { border-bottom-color: var(--accent); }
+
+        /* 水印 */
+        #watermark {
+            position: absolute;
+            font-size: 3.2rem;
+            font-weight: 700;
+            text-align: center;
+            top: 57%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text);
+            opacity: 0.05;
+            pointer-events: none;
+            white-space: nowrap;
+            z-index: 0;
+        }
+
+        .tc-note {
+            margin-top: 16px;
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .tc-row { flex-direction: column; align-items: center; }
+            .tc-fields { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="../index.html">🏠 首页</a>
+                <a href="../posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="../about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="container tool-page">
+                <div class="tool-header">
+                    <h2>时间支配</h2>
+                    <p>生成一张个人时间规划卡：定好起止时间，实时倒计时与进度一目了然。所有内容点击即可编辑。</p>
+                </div>
+
+                <div class="tool-panel time-card">
+                    <div class="stamp">自律</div>
+                    <div id="watermark"></div>
+
+                    <div class="tc-head">
+                        <h3>时 间 支 配</h3>
+                        <p>我的时间，我做主</p>
+                    </div>
+
+                    <div class="tc-row">
+                        <div class="tc-photo" id="tc-photo" title="点击上传照片">点击上传<br>你的照片</div>
+                        <div class="tc-fields">
+                            <div class="f-line" contenteditable="true"><span class="f-label">姓名：</span>汪泉</div>
+                            <div class="f-line" contenteditable="true"><span class="f-label">目标：</span>专注做完一件事</div>
+                            <div class="f-line" contenteditable="true"><span class="f-label">宣言：</span>今天也要好好利用时间</div>
+                        </div>
+                    </div>
+
+                    <div class="tc-section-title">规划时段</div>
+                    <div class="tc-times">
+                        <div>
+                            <label class="tool-label">起</label>
+                            <input type="datetime-local" class="tool-input" id="tc-start">
+                        </div>
+                        <div>
+                            <label class="tool-label">止</label>
+                            <input type="datetime-local" class="tool-input" id="tc-end">
+                        </div>
+                    </div>
+
+                    <div class="tc-status" id="tc-status">--</div>
+                    <div class="tc-progress"><div class="tc-progress-bar" id="tc-bar"></div></div>
+
+                    <div class="tc-footer">
+                        <div class="f-item">监督人：<b contenteditable="true">未来的自己</b></div>
+                        <div class="f-item">立卡时间：<b id="tc-made">--</b></div>
+                    </div>
+                </div>
+
+                <p class="tc-note">本卡片为个人时间管理玩具，内容仅保存在你的浏览器中，不具备任何证明效力。</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        // ---------- 照片上传 ----------
+        const photoBox = document.getElementById('tc-photo');
+        photoBox.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    photoBox.innerHTML = '<img src="' + ev.target.result + '" alt="我的照片">';
+                };
+                reader.readAsDataURL(file);
+            });
+            input.click();
+        });
+
+        // ---------- 时间工具 ----------
+        const startEl = document.getElementById('tc-start');
+        const endEl = document.getElementById('tc-end');
+        const statusEl = document.getElementById('tc-status');
+        const barEl = document.getElementById('tc-bar');
+        const wmEl = document.getElementById('watermark');
+        const madeEl = document.getElementById('tc-made');
+
+        function pad(n) { return String(n).padStart(2, '0'); }
+
+        function toLocalInput(d) {
+            return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+                'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+        }
+
+        function fmtDur(ms) {
+            const s = Math.floor(ms / 1000);
+            const d = Math.floor(s / 86400);
+            const h = Math.floor((s % 86400) / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            if (d > 0) return d + ' 天 ' + pad(h) + ':' + pad(m) + ':' + pad(sec);
+            return pad(h) + ':' + pad(m) + ':' + pad(sec);
+        }
+
+        // 默认：现在 -> 两小时后
+        const now = new Date();
+        const later = new Date(now.getTime() + 2 * 3600 * 1000);
+        startEl.value = toLocalInput(now);
+        endEl.value = toLocalInput(later);
+        madeEl.textContent = now.toLocaleString();
+
+        // 水印上下浮动
+        let wmTop = 57, wmDir = 1;
+
+        function tick() {
+            const s = new Date(startEl.value).getTime();
+            const e = new Date(endEl.value).getTime();
+            const t = Date.now();
+
+            if (isNaN(s) || isNaN(e) || e <= s) {
+                statusEl.textContent = '请设置有效的起止时间';
+                barEl.style.width = '0';
+            } else if (t < s) {
+                statusEl.textContent = '距开始还有 ' + fmtDur(s - t);
+                barEl.style.width = '0';
+            } else if (t <= e) {
+                const pct = (t - s) / (e - s) * 100;
+                statusEl.textContent = '进行中 · 已过去 ' + fmtDur(t - s) + '（' + pct.toFixed(1) + '%）';
+                barEl.style.width = pct + '%';
+            } else {
+                statusEl.textContent = '已结束 · 共 ' + fmtDur(e - s) + '，干得漂亮';
+                barEl.style.width = '100%';
+            }
+
+            // 水印
+            wmEl.textContent = new Date().toLocaleString();
+            wmTop += wmDir * 0.5;
+            if (wmTop > 75) wmDir = -1;
+            if (wmTop < 57) wmDir = 1;
+            wmEl.style.top = wmTop + '%';
+        }
+
+        startEl.addEventListener('change', tick);
+        endEl.addEventListener('change', tick);
+        tick();
+        setInterval(tick, 1000);
+    })();
+    </script>
+</body>
+</html>

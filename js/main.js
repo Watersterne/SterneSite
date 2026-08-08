@@ -5,7 +5,7 @@ const posts = [
     {
         id: 7,
         title: "SterneSite Web | 个人主页",
-        excerpt: "摘要待补充...",
+        excerpt: "A Personal Chance......",
         date: "2026-08-08",
         tag: "tech",
         tagLabel: "技术",
