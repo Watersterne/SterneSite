@@ -1,11 +1,11 @@
 @echo off
 title New Post - SterneSite
-cd /d "%~dp0"
+cd /d "%~dp0.."
 
 echo.
 echo Starting New Post helper...
 echo.
-python new_post.py
+python scripts\new_post.py
 if errorlevel 1 (
     echo.
     echo [INFO] Script exited without success.

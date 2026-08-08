@@ -32,7 +32,8 @@ except ImportError:
     sys.exit(1)
 
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+# 本脚本位于 scripts/ 目录下，项目根目录为上两级
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JS_PATH = os.path.join(ROOT, 'js', 'main.js')
 POSTS_DIR = os.path.join(ROOT, 'posts')
 IMAGES_DIR = os.path.join(ROOT, 'images', 'posts')

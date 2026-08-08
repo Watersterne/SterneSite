@@ -9,7 +9,8 @@ import re
 import sys
 import datetime
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
+# 本脚本位于 scripts/ 目录下，项目根目录为上两级
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 JS_PATH = os.path.join(ROOT, 'js', 'main.js')
 
 TAGS = {
