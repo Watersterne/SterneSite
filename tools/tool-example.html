@@ -1,0 +1,170 @@
+<!--
+  ============================================================
+  示例工具：BMI 计算器（学习模板）
+  ------------------------------------------------------------
+  一个网页 = 三层东西叠在一起：
+    1. HTML —— 页面的"骨架"：有哪些按钮、输入框、文字
+    2. CSS  —— 页面的"衣服"：颜色、大小、间距、圆角
+    3. JS   —— 页面的"行为"：点了按钮之后干什么
+  想改成自己的工具时，只需要动三处：
+    ① 改 <title> 和中间主内容区的 HTML（换成你的输入框/按钮）
+    ② 改 <style> 里的样式（可选，不改也能用）
+    ③ 改最下面 <script> 里的计算逻辑
+  侧边栏那一大段直接复制其他工具页的就行，不用懂它。
+  ============================================================
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- 告诉浏览器用 UTF-8 读这个文件，中文才不会乱码 -->
+    <meta charset="UTF-8">
+    <!-- 让手机上按正常比例显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 浏览器标签页上显示的标题 -->
+    <title>BMI 计算器（示例） | 星网</title>
+
+    <!-- 引入全站样式：侧边栏、深色模式、按钮长相都靠它 -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- 这段是"防白闪"：如果用户之前选了深色模式，
+         在页面还没画出来之前就先切深色。每个工具页都有，照抄即可 -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+
+    <!-- ========== 本页专用的 CSS ========== -->
+    <style>
+        /* 给结果文字定义三种"状态颜色"，JS 会根据结果切换 */
+        .bmi-low  { color: #22a06b; }  /* 偏瘦：绿色 */
+        .bmi-ok   { color: #4f46e5; }  /* 正常：主题蓝 */
+        .bmi-high { color: #e05252; }  /* 偏重：红色 */
+
+        /* 结果数字放大加粗，看起来醒目 */
+        .bmi-number {
+            font-size: 2.4rem;      /* 字号是正文的 2.4 倍 */
+            font-weight: 700;       /* 加粗 */
+        }
+    </style>
+</head>
+<body>
+    <!-- 外层两栏布局：左边侧边栏 + 右边主内容，全站统一 -->
+    <div class="layout">
+
+        <!-- ===== 侧边栏：从别的工具页原样复制，不用改 ===== -->
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="../index.html">🏠 首页</a>
+                <a href="../posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="../about.html">🙋 关于</a>
+            </nav>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <!-- ===== 主内容区：你的工具长什么样，就改这里 ===== -->
+        <main class="main">
+            <div class="container tool-page">
+
+                <!-- 工具标题和一句话说明 -->
+                <div class="tool-header">
+                    <h2>BMI 计算器（示例）</h2>
+                    <p>输入身高体重，点一下算出结果。这是一个带注释的学习模板。</p>
+                </div>
+
+                <!-- tool-panel 是全站统一的"白色卡片"样式 -->
+                <div class="tool-panel" style="max-width: 480px;">
+
+                    <!-- tool-row 让两个输入框并排站，窄屏自动换行 -->
+                    <div class="tool-row">
+                        <div>
+                            <!-- label 是输入框上方的小字说明 -->
+                            <label class="tool-label">身高（厘米）</label>
+                            <!-- input 是输入框；id 是它的"名字"，JS 靠名字找它
+                                 type="number" 表示只让输数字 -->
+                            <input type="number" class="tool-input" id="h-input" placeholder="例如 170">
+                        </div>
+                        <div>
+                            <label class="tool-label">体重（公斤）</label>
+                            <input type="number" class="tool-input" id="w-input" placeholder="例如 65">
+                        </div>
+                    </div>
+
+                    <!-- 按钮：tool-btn 是全站统一的蓝色按钮样式 -->
+                    <button class="tool-btn" id="bmi-btn">计算</button>
+
+                    <!-- 结果显示区：一开始是空的，JS 算完会把内容塞进来 -->
+                    <div class="tool-result" id="bmi-result">结果会显示在这里</div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- 全站脚本：负责主题切换按钮等公共功能，照抄 -->
+    <script src="../js/main.js"></script>
+
+    <!-- ========== 本页专用的 JS：工具的"大脑" ========== -->
+    <script>
+        // 第 1 步：按 id 把页面上的元素"抓"到手里，之后才能操作它们
+        var hInput  = document.getElementById('h-input');   // 身高输入框
+        var wInput  = document.getElementById('w-input');   // 体重输入框
+        var btn     = document.getElementById('bmi-btn');   // 计算按钮
+        var result  = document.getElementById('bmi-result');// 结果显示区
+
+        // 第 2 步：给按钮绑定"点击事件"——点了就执行大括号里的函数
+        btn.addEventListener('click', function () {
+
+            // 第 3 步：读取输入框里的文字（.value 拿到的是字符串）
+            var hText = hInput.value;
+            var wText = wInput.value;
+
+            // 第 4 步：先检查有没有好好输入；没输就提醒并结束本次计算
+            if (hText === '' || wText === '') {
+                result.textContent = '请先填好身高和体重';
+                return;  // return 表示"到此为止，下面的代码不执行"
+            }
+
+            // 第 5 步：把字符串转成数字才能做数学运算
+            var h = parseFloat(hText);   // 身高，厘米
+            var w = parseFloat(wText);   // 体重，公斤
+
+            // 再检查一下数字是否合理（parseFloat 失败会得到 NaN = 不是数字）
+            if (isNaN(h) || isNaN(w) || h <= 0 || w <= 0) {
+                result.textContent = '请输入有效的数字';
+                return;
+            }
+
+            // 第 6 步：真正的计算。BMI = 体重 ÷ 身高²（身高要换成米）
+            var meters = h / 100;                 // 厘米 → 米
+            var bmi = w / (meters * meters);      // BMI 公式
+            bmi = bmi.toFixed(1);                 // 保留 1 位小数，变成字符串
+
+            // 第 7 步：根据数值分档，决定提示语和颜色
+            var label, colorClass;
+            if (bmi < 18.5)      { label = '偏瘦，多吃点';   colorClass = 'bmi-low';  }
+            else if (bmi < 24)   { label = '正常，保持住';   colorClass = 'bmi-ok';   }
+            else                 { label = '偏重，动起来';   colorClass = 'bmi-high'; }
+
+            // 第 8 步：把结果写回页面
+            // innerHTML 可以写带标签的内容（<span> 用来套颜色样式）
+            result.innerHTML =
+                'BMI = <span class="bmi-number ' + colorClass + '">' + bmi + '</span>' +
+                ' <span class="' + colorClass + '">（' + label + '）</span>';
+        });
+    </script>
+</body>
+</html>
