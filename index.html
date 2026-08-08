@@ -8,55 +8,58 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">✦ 我的博客</a>
-            <div class="nav-links">
-                <a href="index.html" class="active">首页</a>
-                <a href="about.html">关于</a>
-                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙</button>
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
+                <div class="profile-tags">
+                    <span class="tag">#开发</span>
+                    <span class="tag">#随笔</span>
+                    <span class="tag">#读书</span>
+                </div>
             </div>
-        </div>
-    </nav>
 
-    <!-- 头部横幅 -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1>你好，我是汪泉 👋</h1>
-            <p>一个记录者而已......</p>
-            <div class="hero-tags">
-                <span class="tag">#开发</span>
-                <span class="tag">#随笔</span>
-                <span class="tag">#读书</span>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="active">🏠 首页</a>
+                <a href="about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">分类</h3>
+                <div class="filter-tags">
+                    <button class="filter-btn active" data-tag="all">全部</button>
+                    <button class="filter-btn" data-tag="tech">技术</button>
+                    <button class="filter-btn" data-tag="life">生活</button>
+                    <button class="filter-btn" data-tag="reading">读书</button>
+                </div>
             </div>
-        </div>
-    </header>
 
-    <!-- 文章列表 -->
-    <main class="container">
-        <div class="section-header">
-            <h2>📝 最新文章</h2>
-            <div class="filter-tags">
-                <button class="filter-btn active" data-tag="all">全部</button>
-                <button class="filter-btn" data-tag="tech">技术</button>
-                <button class="filter-btn" data-tag="life">生活</button>
-                <button class="filter-btn" data-tag="reading">读书</button>
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
             </div>
-        </div>
 
-        <div class="post-grid" id="post-grid">
-            <!-- 文章卡片由 JS 动态生成 -->
-        </div>
-    </main>
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>© 2026 BLOG POWERED BY WangQuan</p>
-            <p class="footer-sub">Powered by Cloudflare Pages</p>
-        </div>
-    </footer>
+        <!-- 主内容区 -->
+        <main class="main">
+            <div class="container">
+                <div class="section-header">
+                    <h2>📝 最新文章</h2>
+                </div>
+                <div class="post-grid" id="post-grid">
+                    <!-- 文章卡片由 JS 动态生成 -->
+                </div>
+            </div>
+        </main>
+    </div>
 
     <script src="js/main.js"></script>
 </body>

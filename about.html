@@ -7,46 +7,57 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="nav-logo">✦ 我的博客</a>
-            <div class="nav-links">
-                <a href="index.html">首页</a>
-                <a href="about.html" class="active">关于</a>
-                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙</button>
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-desc">一个记录者而已......</p>
             </div>
-        </div>
-    </nav>
 
-    <main class="container about-page">
-        <div class="about-card">
-            <div class="about-avatar">👨‍💻</div>
-            <h1>关于我</h1>
-            <p class="about-desc">
-                你好!我是WangQuan,喜欢用代码创造有趣的东西.
-                这个博客谨用来记录...
-            </p>
-            <div class="about-info">
-                <h3>🛠 技术栈</h3>
-                <div class="skill-tags">
-                    <span class="skill">HTML/CSS</span>
-                    <span class="skill">JavaScript</span>
-                    <span class="skill">Vue.js</span>
-                    <span class="skill">Python</span>
-                    <span class="skill">Git</span>
+            <nav class="sidebar-nav">
+                <a href="index.html">🏠 首页</a>
+                <a href="about.html" class="active">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main">
+            <div class="container about-page">
+                <div class="about-card">
+                    <h1>关于我</h1>
+                    <p class="about-desc">
+                        你好!我是WangQuan,喜欢用代码创造有趣的东西.
+                        这个博客谨用来记录...
+                    </p>
+                    <div class="about-info">
+                        <h3>🛠 技术栈</h3>
+                        <div class="skill-tags">
+                            <span class="skill">HTML/CSS</span>
+                            <span class="skill">JavaScript</span>
+                            <span class="skill">Vue.js</span>
+                            <span class="skill">Python</span>
+                            <span class="skill">Git</span>
+                        </div>
+                        <h3>📬 联系我</h3>
+                        <p>Email: 暂未公开</p>
+                        <p>GitHub: 暂未公开</p>
+                    </div>
                 </div>
-                <h3>📬 联系我</h3>
-                <p>Email: 暂未公开</p>
-                <p>GitHub: 暂未公开</p>
             </div>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="footer-content">
-            <p>© 2026 BLOG POWERED BY WangQuan</p>
-        </div>
-    </footer>
+        </main>
+    </div>
 
     <script src="js/main.js"></script>
 </body>

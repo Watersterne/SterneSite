@@ -203,18 +203,18 @@ function initTheme() {
     const saved = localStorage.getItem('theme');
     if (saved === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        toggle.textContent = '☀️';
+        toggle.textContent = '☀️ 切换浅色模式';
     }
 
     toggle.addEventListener('click', () => {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         if (isDark) {
             document.documentElement.removeAttribute('data-theme');
-            toggle.textContent = '🌙';
+            toggle.textContent = '🌙 切换深色模式';
             localStorage.setItem('theme', 'light');
         } else {
             document.documentElement.setAttribute('data-theme', 'dark');
-            toggle.textContent = '☀️';
+            toggle.textContent = '☀️ 切换浅色模式';
             localStorage.setItem('theme', 'dark');
         }
     });
