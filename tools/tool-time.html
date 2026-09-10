@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>时间支配 | 星网</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
     <link rel="stylesheet" href="../css/style.css">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
     </script>
     <style>
         .time-card {
@@ -223,7 +226,7 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
-                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-name">汪泉</p>
                 <p class="profile-desc">一个记录者而已......</p>
             </div>
 
@@ -236,7 +239,7 @@
 
             <div class="sidebar-section">
                 <h3 class="sidebar-title">主题</h3>
-                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+                <button id="theme-toggle" class="theme-btn" title="切换主题" aria-label="切换主题">🌙 切换深色模式</button>
             </div>
 
             <div class="sidebar-footer">
@@ -264,9 +267,9 @@
                     <div class="tc-row">
                         <div class="tc-photo" id="tc-photo" title="点击上传照片">点击上传<br>你的照片</div>
                         <div class="tc-fields">
-                            <div class="f-line" contenteditable="true"><span class="f-label">姓名：</span>汪泉</div>
-                            <div class="f-line" contenteditable="true"><span class="f-label">目标：</span>专注做完一件事</div>
-                            <div class="f-line" contenteditable="true"><span class="f-label">宣言：</span>今天也要好好利用时间</div>
+                            <div class="f-line" contenteditable="true" id="tc-name"><span class="f-label">姓名：</span>汪泉</div>
+                            <div class="f-line" contenteditable="true" id="tc-goal"><span class="f-label">目标：</span>专注做完一件事</div>
+                            <div class="f-line" contenteditable="true" id="tc-motto"><span class="f-label">宣言：</span>今天也要好好利用时间</div>
                         </div>
                     </div>
 
@@ -286,7 +289,7 @@
                     <div class="tc-progress"><div class="tc-progress-bar" id="tc-bar"></div></div>
 
                     <div class="tc-footer">
-                        <div class="f-item">监督人：<b contenteditable="true">未来的自己</b></div>
+                        <div class="f-item">监督人：<b id="tc-supervisor" contenteditable="true">未来的自己</b></div>
                         <div class="f-item">立卡时间：<b id="tc-made">--</b></div>
                     </div>
                 </div>
@@ -301,8 +304,28 @@
     (function () {
         'use strict';
 
+        const STORE_KEY = 'tooltime-card';
+
+        function storageGet(key) {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
+
+        function storageSet(key, value) {
+            try { localStorage.setItem(key, value); } catch (e) { throw e; }
+        }
+
         // ---------- 照片上传 ----------
         const photoBox = document.getElementById('tc-photo');
+        let photoDataUrl = '';
+
+        function renderPhoto(src) {
+            photoBox.innerHTML = '';
+            const img = document.createElement('img');
+            img.alt = '我的照片';
+            img.src = src;
+            photoBox.appendChild(img);
+        }
+
         photoBox.addEventListener('click', () => {
             const input = document.createElement('input');
             input.type = 'file';
@@ -312,7 +335,9 @@
                 if (!file) return;
                 const reader = new FileReader();
                 reader.onload = (ev) => {
-                    photoBox.innerHTML = '<img src="' + ev.target.result + '" alt="我的照片">';
+                    photoDataUrl = ev.target.result;
+                    renderPhoto(photoDataUrl);
+                    saveCard();
                 };
                 reader.readAsDataURL(file);
             });
@@ -326,6 +351,10 @@
         const barEl = document.getElementById('tc-bar');
         const wmEl = document.getElementById('watermark');
         const madeEl = document.getElementById('tc-made');
+        const nameLine = document.getElementById('tc-name');
+        const goalLine = document.getElementById('tc-goal');
+        const mottoLine = document.getElementById('tc-motto');
+        const supervisorEl = document.getElementById('tc-supervisor');
 
         function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -344,12 +373,57 @@
             return pad(h) + ':' + pad(m) + ':' + pad(sec);
         }
 
-        // 默认：现在 -> 两小时后
-        const now = new Date();
-        const later = new Date(now.getTime() + 2 * 3600 * 1000);
-        startEl.value = toLocalInput(now);
-        endEl.value = toLocalInput(later);
-        madeEl.textContent = now.toLocaleString();
+        // ---------- 持久化 ----------
+        function saveCard() {
+            const data = {
+                name: nameLine.innerHTML,
+                goal: goalLine.innerHTML,
+                motto: mottoLine.innerHTML,
+                supervisor: supervisorEl.innerHTML,
+                start: startEl.value,
+                end: endEl.value,
+                made: madeEl.textContent,
+                photo: photoDataUrl
+            };
+            try {
+                storageSet(STORE_KEY, JSON.stringify(data));
+            } catch (e) {
+                // 存不下（通常是照片太大超出配额），去掉照片再试一次
+                try {
+                    data.photo = '';
+                    storageSet(STORE_KEY, JSON.stringify(data));
+                } catch (e2) { /* 忽略 */ }
+            }
+        }
+
+        // 恢复上次的内容；没有存档才用默认值
+        let restored = false;
+        try {
+            const saved = JSON.parse(storageGet(STORE_KEY) || 'null');
+            if (saved && typeof saved === 'object') {
+                if (saved.name) nameLine.innerHTML = saved.name;
+                if (saved.goal) goalLine.innerHTML = saved.goal;
+                if (saved.motto) mottoLine.innerHTML = saved.motto;
+                if (saved.supervisor) supervisorEl.innerHTML = saved.supervisor;
+                if (saved.start) startEl.value = saved.start;
+                if (saved.end) endEl.value = saved.end;
+                if (saved.made) madeEl.textContent = saved.made;
+                if (saved.photo) {
+                    photoDataUrl = saved.photo;
+                    renderPhoto(photoDataUrl);
+                }
+                restored = true;
+            }
+        } catch (e) { /* 存档损坏则用默认值 */ }
+
+        if (!restored) {
+            // 默认：现在 -> 两小时后
+            const now = new Date();
+            const later = new Date(now.getTime() + 2 * 3600 * 1000);
+            startEl.value = toLocalInput(now);
+            endEl.value = toLocalInput(later);
+            madeEl.textContent = now.toLocaleString();
+        }
 
         // 水印上下浮动
         let wmTop = 57, wmDir = 1;
@@ -382,8 +456,11 @@
             wmEl.style.top = wmTop + '%';
         }
 
-        startEl.addEventListener('change', tick);
-        endEl.addEventListener('change', tick);
+        [nameLine, goalLine, mottoLine, supervisorEl].forEach(el => {
+            el.addEventListener('input', saveCard);
+        });
+        startEl.addEventListener('change', () => { saveCard(); tick(); });
+        endEl.addEventListener('change', () => { saveCard(); tick(); });
         tick();
         setInterval(tick, 1000);
     })();

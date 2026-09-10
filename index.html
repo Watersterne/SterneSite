@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星网/Creat A New World</title>
+    <title>星网 | Create A New World</title>
+    <meta name="description" content="汪泉的个人网站「星网」——记录技术、生活与思考的个人主页。">
+    <meta property="og:title" content="星网 | Create A New World">
+    <meta property="og:description" content="汪泉的个人网站「星网」——记录技术、生活与思考的个人主页。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="星网">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
     </script>
 </head>
 <body>
@@ -17,12 +25,12 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
-                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-name">汪泉</p>
                 <p class="profile-desc">一个记录者而已......</p>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="index.html" class="active">🏠 首页</a>
+                <a href="index.html" class="active" aria-current="page">🏠 首页</a>
                 <a href="posts.html">📝 文章</a>
                 <a href="tools/tools.html">🧰 工具</a>
                 <a href="about.html">🙋 关于</a>
@@ -42,8 +50,9 @@
         <!-- 主内容区：首页大图 -->
         <main class="main">
             <div class="container home-page">
+                <h1 class="sr-only">星网 — 汪泉的个人主页</h1>
                 <figure class="home-figure">
-                    <img src="images/home.jpg" alt="星网首页图片" class="home-image">
+                    <img src="images/home.jpg" alt="星网首页图片" class="home-image" width="1600" height="901" decoding="async">
                     <figcaption class="home-caption">欢迎来到星网 ✨</figcaption>
                 </figure>
             </div>

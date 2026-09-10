@@ -55,7 +55,6 @@
         else if (label === '×') { tokens.push({ t: 'op', v: '*' }); }
         else if (label === '−') { tokens.push({ t: 'op', v: '-' }); }
         else if (label === '+') { tokens.push({ t: 'op', v: '+' }); }
-        else if (label === '−') { tokens.push({ t: 'op', v: '-' }); }
         else if ('%^('.includes(label)) { tokens.push({ t: 'op', v: label }); }
         else if (label === ')') { tokens.push({ t: 'op', v: ')' }); }
         else { pushDigit(label); }

@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>文章 | 星网</title>
+    <meta name="description" content="星网的文章列表——技术、生活与读书随笔。">
+    <meta property="og:title" content="文章 | 星网">
+    <meta property="og:description" content="星网的文章列表——技术、生活与读书随笔。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="星网">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
     </script>
 </head>
 <body>
@@ -17,13 +25,13 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
-                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-name">汪泉</p>
                 <p class="profile-desc">一个记录者而已......</p>
             </div>
 
             <nav class="sidebar-nav">
                 <a href="index.html">🏠 首页</a>
-                <a href="posts.html" class="active">📝 文章</a>
+                <a href="posts.html" class="active" aria-current="page">📝 文章</a>
                 <a href="tools/tools.html">🧰 工具</a>
                 <a href="about.html">🙋 关于</a>
             </nav>
@@ -52,6 +60,7 @@
         <!-- 主内容区 -->
         <main class="main">
             <div class="container">
+                <h1 class="sr-only">文章列表</h1>
                 <div class="section-header">
                     <h2>📝 最新文章</h2>
                 </div>

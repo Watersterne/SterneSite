@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文章标题 | 星网</title>
+    <title>文章详情 | 星网</title>
+    <meta name="description" content="星网文章详情页——技术、生活与读书随笔。">
+    <meta property="og:title" content="文章详情 | 星网">
+    <meta property="og:description" content="星网文章详情页——技术、生活与读书随笔。">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="星网">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="css/style.css">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
     </script>
 </head>
 <body>
@@ -17,7 +25,7 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
-                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-name">汪泉</p>
                 <p class="profile-desc">一个记录者而已......</p>
             </div>
 
@@ -27,7 +35,6 @@
                 <a href="tools/tools.html">🧰 工具</a>
                 <a href="about.html">🙋 关于</a>
             </nav>
-
             <div class="sidebar-section">
                 <h3 class="sidebar-title">主题</h3>
                 <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>

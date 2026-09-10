@@ -6,3 +6,17 @@ desktop.ini
 # Python 缓存
 __pycache__/
 *.pyc
+
+# Word 锁文件与临时文件
+~$*
+*.tmp
+
+# 内部文档（不上传公开仓库）
+docs/项目手册与交接说明.md
+docs/消除移植痕迹清单.md
+
+# 调试脚本
+debug_*.bat
+
+# 本地工具配置
+.zcode/

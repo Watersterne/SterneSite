@@ -88,6 +88,8 @@ a:hover { opacity: 0.8; }
 .profile-name {
     font-size: 1.3rem;
     font-weight: 700;
+    /* h1 降级为 p 后用显式 margin 保持原有间距 */
+    margin: 0.67em 0;
 }
 
 .profile-desc {
@@ -234,6 +236,17 @@ a:hover { opacity: 0.8; }
     transition: all 0.3s ease;
     cursor: pointer;
     box-shadow: var(--card-shadow);
+    /* 卡片为 <a> 元素，去除链接默认样式 */
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.post-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 48px 0;
 }
 
 .post-card:hover {
@@ -825,4 +838,17 @@ a:hover { opacity: 0.8; }
     .stock-hero { padding: 26px 22px; }
     .tool-panel { padding: 20px; }
     .calc-keys { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* 仅供屏幕阅读器可见的辅助文本 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }

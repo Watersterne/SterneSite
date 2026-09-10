@@ -53,6 +53,16 @@ MONOSPACE_FONTS = {
     '仿宋_gb2312', '仿宋', '等线', 'dengxian',
 }
 
+# 浏览器无法显示的图片格式
+SKIP_IMAGE_EXTS = {'.emf', '.wmf', '.tiff'}
+
+# 匹配纯分隔线（模板第5行的 "——————" 之类）
+DASH_LINE_RE = re.compile(r'^[-—_=·\s]+$')
+
+# 元信息行的可选前缀（兼容"分类：生活"和直接写"生活"两种写法）
+TAG_PREFIX_RE = re.compile(r'^(?:分类|tag)\s*[:：]\s*', re.IGNORECASE)
+DATE_PREFIX_RE = re.compile(r'^(?:日期|date)\s*[:：]\s*', re.IGNORECASE)
+
 
 def escape_html(text):
     """HTML 特殊字符转义"""
@@ -69,6 +79,15 @@ def escape_js_string(text):
                 .replace('\r', '')
                 .replace('\n', ' ')
                 .strip())
+
+
+def escape_js_template(text):
+    """模板字符串转义（正文嵌入 main.js 的反引号字符串前必须调用，
+    否则正文里的反引号或 ${ 会破坏整个 main.js 的语法）"""
+    return (text.replace('\\', '\\\\')
+                .replace('`', '\\`')
+                .replace('${', '\\${')
+                .replace('\r', ''))
 
 
 def is_monospace(run):
@@ -96,14 +115,20 @@ def extract_images(doc, post_id):
     os.makedirs(IMAGES_DIR, exist_ok=True)
 
     for rel_id, rel in doc.part.rels.items():
-        if "image" in rel.reltype:
-            image_data = rel.target_part.blob
-            ext = os.path.splitext(rel.target_ref)[1] or '.png'
-            filename = f'post{post_id}_{rel_id}{ext}'
-            filepath = os.path.join(IMAGES_DIR, filename)
-            with open(filepath, 'wb') as f:
-                f.write(image_data)
-            image_map[rel_id] = f'images/posts/{filename}'
+        if "image" not in rel.reltype:
+            continue
+        if rel.is_external:
+            continue
+        ext = os.path.splitext(rel.target_ref)[1].lower() or '.png'
+        if ext in SKIP_IMAGE_EXTS:
+            print(f'  [提示] 跳过浏览器无法显示的图片：{os.path.basename(rel.target_ref)}')
+            continue
+        image_data = rel.target_part.blob
+        filename = f'post{post_id}_{rel_id}{ext}'
+        filepath = os.path.join(IMAGES_DIR, filename)
+        with open(filepath, 'wb') as f:
+            f.write(image_data)
+        image_map[rel_id] = f'images/posts/{filename}'
 
     return image_map
 
@@ -128,16 +153,18 @@ def parse_metadata(paragraphs):
     if len(lines) >= 2 and lines[1]:
         meta['excerpt'] = lines[1]
     if len(lines) >= 3 and lines[2]:
-        tag_input = lines[2].strip()
+        tag_input = TAG_PREFIX_RE.sub('', lines[2]).strip()
         if tag_input in TAG_MAP:
             meta['tag'], meta['tag_label'] = TAG_MAP[tag_input]
+        else:
+            print(f'[警告] 无法识别的分类"{tag_input}"，已默认为"技术"（可选：技术/生活/读书）')
     if len(lines) >= 4 and lines[3]:
-        date_str = lines[3].strip()
+        date_str = DATE_PREFIX_RE.sub('', lines[3]).strip()
         try:
             datetime.date.fromisoformat(date_str)
             meta['date'] = date_str
         except ValueError:
-            pass
+            print(f'[警告] 无法识别的日期"{date_str}"，已默认为今天（格式：YYYY-MM-DD）')
 
     return meta
 
@@ -171,8 +198,30 @@ def convert_paragraph(para, image_map):
                 if embed_id and embed_id in image_map:
                     img_src = image_map[embed_id]
                     html_parts.append(f'<img src="{img_src}" alt="文章配图">')
+        # 段落里除了图还有文字时（如图注）一并保留
+        if para.text.strip():
+            text_parts = []
+            for run in para.runs:
+                t = escape_html(run.text)
+                if not t:
+                    continue
+                if is_monospace(run):
+                    text_parts.append(f'<code>{t}</code>')
+                elif run.bold:
+                    text_parts.append(f'<strong>{t}</strong>')
+                elif run.italic:
+                    text_parts.append(f'<em>{t}</em>')
+                else:
+                    text_parts.append(t)
+            caption = ''.join(text_parts)
+            if caption.strip():
+                html_parts.append(f'<p>{caption}</p>')
         if html_parts:
             return ''.join(html_parts)
+
+    # 空白段落直接跳过（避免生成空 <pre>）
+    if not para.text.strip():
+        return ''
 
     # 检查是否是代码块（整段等宽字体）
     runs = para.runs
@@ -181,9 +230,6 @@ def convert_paragraph(para, image_map):
         return f'<pre><code>{code_text}</code></pre>'
 
     # 普通段落：处理行内代码和文本
-    if not para.text.strip():
-        return ''
-
     html_parts = []
     for run in runs:
         text = escape_html(run.text)
@@ -229,9 +275,12 @@ def convert_docx_to_html(docx_path):
 
     meta['id'] = new_id
 
-    # 转换正文（跳过前4行元信息）
+    # 转换正文（跳过前4行元信息；过滤模板分隔线）
     html_parts = []
     for para in doc.paragraphs[4:]:
+        text = para.text.strip()
+        if text and DASH_LINE_RE.fullmatch(text) and not any(is_monospace(r) for r in para.runs):
+            continue  # 模板里的分隔线不发布
         html = convert_paragraph(para, image_map)
         if html:
             html_parts.append(html)
@@ -263,7 +312,7 @@ def insert_to_mainjs(meta, html_content):
         '        tag: "%s",' % meta['tag'],
         '        tagLabel: "%s",' % meta['tag_label'],
         '        content: `',
-        '            %s' % html_content.replace('\n', '\n            '),
+        '            %s' % escape_js_template(html_content).replace('\n', '\n            '),
         '        `',
         '    },',
     ]
@@ -289,8 +338,13 @@ def insert_to_mainjs(meta, html_content):
 def main():
     os.makedirs(POSTS_DIR, exist_ok=True)
 
-    # 列出可用的 docx 文件
-    docx_files = [f for f in os.listdir(POSTS_DIR) if f.endswith('.docx')]
+    # 列出可用的 docx 文件（跳过 Word 锁文件与写作模板，扩展名大小写不敏感）
+    docx_files = sorted(
+        f for f in os.listdir(POSTS_DIR)
+        if f.lower().endswith('.docx')
+        and not f.startswith('~$')
+        and not f.startswith('新文章模板')
+    )
     if not docx_files:
         print('=' * 44)
         print('  Word 转博客文章')
@@ -338,7 +392,11 @@ def main():
         filepath = os.path.join(POSTS_DIR, filename)
         print(f'\n正在转换: {filename}')
 
-        meta, html = convert_docx_to_html(filepath)
+        try:
+            meta, html = convert_docx_to_html(filepath)
+        except Exception as e:
+            print(f'  [错误] 转换失败，已跳过该文件：{e}')
+            continue
         if meta is None:
             continue
 

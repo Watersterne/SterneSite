@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<meta name="description" content="欢迎来到Hack HTU，本工具服务于河南师范大学学生（HTUer）。为河师大学生提供一些方便快捷的工具，提供河师大学生的非官方群组。">
-<meta name="keywords" content="河南师范大学, 河师大, HTU, HTUer">
+<meta name="description" content="本工具服务于那些想要自我掌握时间的同志们">
+<meta name="keywords" content="时间支配">
 <meta name=viewport
     content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
 <style>
@@ -1574,26 +1574,26 @@
     }
 </script>
 <script>
-    // 一坨大便
+    // 表单内容同步到展示区（用 textContent，避免把输入当 HTML 插入）
     function FuckName() {
         var text = document.getElementById("fakename").value;
-        document.getElementById("fuckname").innerHTML = text;
+        document.getElementById("fuckname").textContent = text;
     }
 
     function FuckNumber() {
         var text = document.getElementById("fakenumber").value;
-        document.getElementById("fucknumber").innerHTML = text;
+        document.getElementById("fucknumber").textContent = text;
     }
 
     function FuckClass() {
         var text = document.getElementById("fakeclass").value;
-        document.getElementById("fuckclass").innerHTML = text;
+        document.getElementById("fuckclass").textContent = text;
     }
 
     function FuckLeader() {
         var text = document.getElementById("fakeleadername").value;
-        document.getElementById("fuckleadername").innerHTML = text;
-        document.getElementById("fuckleadername_2").innerHTML = text;
+        document.getElementById("fuckleadername").textContent = text;
+        document.getElementById("fuckleadername_2").textContent = text;
     }
 
     function FakeMessage() {

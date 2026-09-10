@@ -47,10 +47,32 @@
 
     runBtn.addEventListener('click', run);
 
+    function copyText(text) {
+        // file:// 等非安全上下文没有 navigator.clipboard，回退到 execCommand
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            return navigator.clipboard.writeText(text);
+        }
+        return new Promise((resolve, reject) => {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy') ? resolve() : reject(new Error('copy failed'));
+            } catch (e) {
+                reject(e);
+            } finally {
+                document.body.removeChild(ta);
+            }
+        });
+    }
+
     copyBtn.addEventListener('click', async () => {
         if (!lastOutput) return;
         try {
-            await navigator.clipboard.writeText(lastOutput);
+            await copyText(lastOutput);
             copyBtn.textContent = '已复制 ✓';
             setTimeout(() => copyBtn.textContent = '复制结果', 1500);
         } catch (e) {

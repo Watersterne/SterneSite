@@ -28,26 +28,57 @@ const posts = [
 
 
 // ============================
+// 工具函数
+// ============================
+function storageGet(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch (e) {
+        return null; // 隐私模式下 localStorage 不可用
+    }
+}
+
+function storageSet(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) { /* 忽略写入失败 */ }
+}
+
+function escapeHtml(text) {
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+
+// ============================
 // 渲染文章列表
 // ============================
 function renderPosts(filter = 'all') {
     const grid = document.getElementById('post-grid');
     if (!grid) return;
 
-    const filtered = filter === 'all'
-        ? posts
-        : posts.filter(p => p.tag === filter);
+    const filtered = (filter === 'all' ? posts : posts.filter(p => p.tag === filter))
+        .slice()
+        .sort((a, b) => b.date.localeCompare(a.date)); // 按日期倒序，不依赖数组插入顺序
+
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p class="post-empty">该分类暂无文章</p>';
+        return;
+    }
 
     grid.innerHTML = filtered.map(post => `
-        <div class="post-card" onclick="location.href='post.html?id=${post.id}'">
+        <a class="post-card" href="post.html?id=${post.id}">
             <div class="post-meta">
-                <span class="post-tag">${post.tagLabel}</span>
-                <span>${post.date}</span>
+                <span class="post-tag">${escapeHtml(post.tagLabel)}</span>
+                <span>${escapeHtml(post.date)}</span>
             </div>
-            <h3>${post.title}</h3>
-            <p class="post-excerpt">${post.excerpt}</p>
+            <h3>${escapeHtml(post.title)}</h3>
+            <p class="post-excerpt">${escapeHtml(post.excerpt)}</p>
             <span class="read-more">阅读全文 →</span>
-        </div>
+        </a>
     `).join('');
 }
 
@@ -60,20 +91,29 @@ function renderPost() {
     if (!content) return;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const id = parseInt(urlParams.get('id'));
-    const post = posts.find(p => p.id === id);
+    const rawId = urlParams.get('id');
 
-    if (!post) {
-        content.innerHTML = '<h1>文章不存在 😢</h1><p><a href="index.html">返回首页</a></p>';
+    if (rawId === null || rawId.trim() === '') {
+        document.title = '文章详情 | 星网';
+        content.innerHTML = '<h1>缺少文章参数</h1><p>请从 <a href="posts.html">文章列表</a> 选择一篇文章阅读。</p>';
         return;
     }
 
-    document.title = `${post.title} | 我的博客`;
+    const id = parseInt(rawId, 10);
+    const post = Number.isInteger(id) ? posts.find(p => p.id === id) : undefined;
+
+    if (!post) {
+        document.title = '文章不存在 | 星网';
+        content.innerHTML = '<h1>文章不存在 😢</h1><p>没有找到这篇文章，去 <a href="posts.html">文章列表</a> 看看吧。</p>';
+        return;
+    }
+
+    document.title = `${post.title} | 星网`;
 
     content.innerHTML = `
-        <h1>${post.title}</h1>
+        <h1>${escapeHtml(post.title)}</h1>
         <div class="post-info">
-            <span class="post-tag">${post.tagLabel}</span> · ${post.date}
+            <span class="post-tag">${escapeHtml(post.tagLabel)}</span> · ${escapeHtml(post.date)}
         </div>
         <div class="post-body">
             ${post.content}
@@ -88,9 +128,14 @@ function renderPost() {
 function initFilters() {
     const btns = document.querySelectorAll('.filter-btn');
     btns.forEach(btn => {
+        btn.setAttribute('aria-pressed', btn.classList.contains('active') ? 'true' : 'false');
         btn.addEventListener('click', () => {
-            btns.forEach(b => b.classList.remove('active'));
+            btns.forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
             btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
             renderPosts(btn.dataset.tag);
         });
     });
@@ -104,8 +149,7 @@ function initTheme() {
     const toggle = document.getElementById('theme-toggle');
     if (!toggle) return;
 
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') {
+    if (storageGet('theme') === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
         toggle.textContent = '☀️ 切换浅色模式';
     }
@@ -115,11 +159,11 @@ function initTheme() {
         if (isDark) {
             document.documentElement.removeAttribute('data-theme');
             toggle.textContent = '🌙 切换深色模式';
-            localStorage.setItem('theme', 'light');
+            storageSet('theme', 'light');
         } else {
             document.documentElement.setAttribute('data-theme', 'dark');
             toggle.textContent = '☀️ 切换浅色模式';
-            localStorage.setItem('theme', 'dark');
+            storageSet('theme', 'dark');
         }
     });
 }

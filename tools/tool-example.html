@@ -29,9 +29,11 @@
     <!-- 这段是"防白闪"：如果用户之前选了深色模式，
          在页面还没画出来之前就先切深色。每个工具页都有，照抄即可 -->
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
     </script>
 
     <!-- ========== 本页专用的 CSS ========== -->
@@ -56,7 +58,7 @@
         <aside class="sidebar">
             <div class="profile">
                 <div class="profile-avatar">👨‍💻</div>
-                <h1 class="profile-name">汪泉</h1>
+                <p class="profile-name">汪泉</p>
                 <p class="profile-desc">一个记录者而已......</p>
             </div>
             <nav class="sidebar-nav">
@@ -67,7 +69,7 @@
             </nav>
             <div class="sidebar-section">
                 <h3 class="sidebar-title">主题</h3>
-                <button id="theme-toggle" class="theme-btn" title="切换主题">🌙 切换深色模式</button>
+                <button id="theme-toggle" class="theme-btn" title="切换主题" aria-label="切换主题">🌙 切换深色模式</button>
             </div>
             <div class="sidebar-footer">
                 <p>© 2026 WangQuan</p>
