@@ -355,6 +355,20 @@
         font-size: 19px; color: var(--tlr-gold); letter-spacing: .1em;
         border-top: 1px solid var(--tlr-line); border-bottom: 1px solid var(--tlr-line); padding: 9px 20px;
     }
+    /* 史册条目：官至 + 足以入史的事功，紧接在「性格定位」下方。
+       40 条里最宽的一条（曾国藩，537px）也要能在桌面端单行放下，故取 560px；
+       窄屏放不下时用 balance 均分行长，避免末行只剩一个孤字。 */
+    .tlr .res-hero .feat {
+        margin: 18px auto 0; max-width: 560px;
+        font-size: 13.5px; color: var(--tlr-tx2);
+        line-height: 1.95; letter-spacing: .02em;
+        text-wrap: balance;
+    }
+    .tlr .res-hero .feat span:first-child { color: var(--tlr-tx); }
+    .tlr .res-hero .feat i {
+        font-style: normal; color: var(--tlr-gold); opacity: .8; margin: 0 7px;
+    }
+
     .tlr .balance-note {
         max-width: 400px; margin: 22px auto 0; font-size: 13.5px; color: var(--tlr-tx2);
         line-height: 1.9; text-align: left; border-left: 2px solid var(--tlr-line); padding-left: 14px;
