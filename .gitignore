@@ -18,5 +18,9 @@ docs/消除移植痕迹清单.md
 # 调试脚本
 debug_*.bat
 
+# Agent 工作目录（备份副本、工作日志等，属于本地内部资料，不上传公开仓库）
+# 注意：.workbuddy-ai/backup/ 里存有 docs/ 内部手册的副本，若不忽略会绕过上面的排除规则
+.workbuddy-ai/
+
 # 本地工具配置
 .zcode/

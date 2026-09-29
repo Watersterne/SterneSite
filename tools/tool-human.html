@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>同路人 · 人格测试 | 星网</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        try {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        } catch (e) { /* 隐私模式下 localStorage 不可用，忽略 */ }
+    </script>
+    <style>
+    /* ==========================================================================
+       同路人 · 人格测试 —— 工具页专用样式
+       全部规则限定在 .tlr 作用域内，自定义属性统一用 --tlr- 前缀，
+       与全站 css/style.css 的类名和变量（--bg/--text/--border/--accent…）完全隔离，
+       不影响其它页面。配色随全站亮/暗主题切换：亮色＝宣纸，暗色＝原版夜墨。
+       ========================================================================== */
+
+    /* 本页内容收窄，让标题与测试面板对齐成同一列（其余工具页仍用默认 1000px 容器） */
+    .container.tool-page.human-page { max-width: 728px; }
+
+    .tlr {
+        /* —— 亮色（宣纸） —— */
+        --tlr-bg: #fbf8f1;
+        --tlr-bg-solid: #fbf8f1;
+        --tlr-panel: #ffffff;
+        --tlr-panel2: #f5f0e6;
+        --tlr-card-grad: linear-gradient(170deg, #ffffff, #fdfaf4);
+        --tlr-line: rgba(168, 137, 74, .32);
+        --tlr-line2: rgba(60, 48, 30, .12);
+        --tlr-tx: #2b2620;
+        --tlr-tx-strong: #241f18;
+        --tlr-tx-body: #4d453a;
+        --tlr-tx2: #6f665a;
+        --tlr-tx3: #8a8073;
+        --tlr-red: #b04434;
+        --tlr-red-l: #c8503f;
+        --tlr-gold: #a8894a;
+        --tlr-gold-l: #8a6f36;
+        --tlr-gold-d: #c0a068;
+        --tlr-jade: #4f7d76;
+        --tlr-title-grad: linear-gradient(175deg, #5c4a24 8%, #8a6f36 46%, #a8894a 90%);
+        --tlr-matchname-grad: linear-gradient(172deg, #5c4a24, #8a6f36 45%, #a8894a);
+        --tlr-swatch: rgba(176, 68, 52, .75);
+        --tlr-fill-grad: linear-gradient(90deg, rgba(176, 68, 52, .5), #b04434);
+        --tlr-alt-name: #241f18;
+        --tlr-quote: #4a4030;
+        --tlr-track: rgba(60, 48, 30, .10);
+        --tlr-track-bar: rgba(60, 48, 30, .11);
+        --tlr-track-mid: rgba(60, 48, 30, .22);
+        --tlr-grid: rgba(60, 48, 30, .13);
+        --tlr-grid-strong: rgba(60, 48, 30, .28);
+        --tlr-scan: rgba(60, 48, 30, .022);
+        --tlr-seal-bg: rgba(168, 137, 74, .08);
+        --tlr-tag-bg: rgba(168, 137, 74, .10);
+        --tlr-tag-bd: rgba(168, 137, 74, .30);
+        --tlr-ico-good-bg: rgba(168, 137, 74, .16);
+        --tlr-ico-good-bd: rgba(168, 137, 74, .36);
+        --tlr-ico-warn-bg: rgba(176, 68, 52, .09);
+        --tlr-ico-warn-bd: rgba(176, 68, 52, .28);
+        --tlr-sel-bg: rgba(176, 68, 52, .07);
+        --tlr-sel-tx: #7d3226;
+        --tlr-user-fill: rgba(176, 68, 52, .18);
+        --tlr-overlay: rgba(251, 248, 241, .94);
+        --tlr-toast-bg: rgba(255, 255, 255, .98);
+        --tlr-glow: rgba(168, 137, 74, .30);
+        --tlr-serif: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
+        --tlr-sans: "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Hiragino Sans GB", system-ui, -apple-system, sans-serif;
+        --tlr-kai: "Kaiti SC", "KaiTi", "STKaiti", "Songti SC", serif;
+
+        position: relative;
+        z-index: 1;                  /* 保证全屏遮罩能盖住侧边栏 */
+        max-width: 100%;
+        margin: 0 auto;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        color: var(--tlr-tx);
+        font-family: var(--tlr-sans);
+        font-size: 16px;
+        line-height: 1.75;
+        letter-spacing: .01em;
+        background:
+            radial-gradient(900px 460px at 50% -12%, rgba(200, 80, 63, .07), transparent 62%),
+            radial-gradient(700px 420px at 92% 112%, rgba(201, 169, 97, .10), transparent 60%),
+            radial-gradient(620px 360px at -10% 80%, rgba(95, 143, 136, .06), transparent 60%),
+            var(--tlr-bg);
+        /* 注意：这里刻意不设 overflow。
+           1) overflow:hidden/auto 会让 .qhead 的 position:sticky 失效；
+           2) 背景与扫描线本来就被 border-radius 裁切，无需额外裁剪；
+           3) 不裁剪才能保证 .loading 的全屏遮罩正常工作。 */
+    }
+
+    [data-theme="dark"] .tlr {
+        /* —— 暗色（原版夜墨） —— */
+        --tlr-bg: #0c0e12;
+        --tlr-bg-solid: #0c0e12;
+        --tlr-panel: #161a21;
+        --tlr-panel2: #1c2129;
+        --tlr-card-grad: linear-gradient(170deg, rgba(28, 33, 41, .9), rgba(18, 21, 27, .9));
+        --tlr-line: rgba(201, 169, 97, .18);
+        --tlr-line2: rgba(255, 255, 255, .075);
+        --tlr-tx: #eae5db;
+        --tlr-tx-strong: #f2ece1;
+        --tlr-tx-body: #cfc9bd;
+        --tlr-tx2: #a6a094;
+        --tlr-tx3: #6e695e;
+        --tlr-red: #c8503f;
+        --tlr-red-l: #e0705e;
+        --tlr-gold: #c9a961;
+        --tlr-gold-l: #f0dcae;
+        --tlr-gold-d: #8e7743;
+        --tlr-jade: #5f8f88;
+        --tlr-title-grad: linear-gradient(175deg, #fff8ec 8%, #e6d7b6 42%, #b99a5c 88%);
+        --tlr-matchname-grad: linear-gradient(172deg, #fff6e6, #e8d3a5 45%, #b79554);
+        --tlr-swatch: rgba(200, 80, 63, .75);
+        --tlr-fill-grad: linear-gradient(90deg, rgba(200, 80, 63, .55), #c8503f);
+        --tlr-alt-name: #e8dfcc;
+        --tlr-quote: #e5d9bd;
+        --tlr-track: rgba(255, 255, 255, .06);
+        --tlr-track-bar: rgba(255, 255, 255, .07);
+        --tlr-track-mid: rgba(255, 255, 255, .13);
+        --tlr-grid: rgba(255, 255, 255, .06);
+        --tlr-grid-strong: rgba(255, 255, 255, .13);
+        --tlr-scan: rgba(255, 255, 255, .012);
+        --tlr-seal-bg: rgba(201, 169, 97, .05);
+        --tlr-tag-bg: rgba(201, 169, 97, .08);
+        --tlr-tag-bd: rgba(201, 169, 97, .2);
+        --tlr-ico-good-bg: rgba(201, 169, 97, .14);
+        --tlr-ico-good-bd: rgba(201, 169, 97, .3);
+        --tlr-ico-warn-bg: rgba(200, 80, 63, .13);
+        --tlr-ico-warn-bd: rgba(200, 80, 63, .3);
+        --tlr-sel-bg: rgba(200, 80, 63, .1);
+        --tlr-sel-tx: #f6e9e5;
+        --tlr-user-fill: rgba(200, 80, 63, .24);
+        --tlr-overlay: rgba(12, 14, 18, .94);
+        --tlr-toast-bg: rgba(28, 33, 41, .97);
+        --tlr-glow: rgba(201, 169, 97, .45);
+    }
+
+    .tlr *,
+    .tlr *::before,
+    .tlr *::after {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 极细扫描线，营造纸面/绢面质感（原版为 body::before，此处收进容器内） */
+    .tlr::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        border-radius: inherit;
+        opacity: .5;
+        background-image: repeating-linear-gradient(0deg, var(--tlr-scan) 0 1px, transparent 1px 3px);
+    }
+
+    .tlr .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 620px;
+        margin: 0 auto;
+        padding: 0 22px 64px;
+    }
+
+    .tlr .screen { display: none; animation: tlrFade .5s ease both; }
+    .tlr .screen.on { display: block; }
+
+    @keyframes tlrFade {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: none; }
+    }
+
+    .tlr .serif { font-family: var(--tlr-serif); }
+    .tlr .kai   { font-family: var(--tlr-kai); }
+
+    /* ============ 封面 ============ */
+    .tlr .cover { padding-top: 34px; text-align: center; }
+
+    .tlr .seal {
+        display: inline-flex; align-items: center; gap: 9px;
+        border: 1px solid var(--tlr-line); border-radius: 100px;
+        padding: 6px 16px; font-size: 12.5px; color: var(--tlr-gold);
+        letter-spacing: .16em; margin-bottom: 34px;
+        background: var(--tlr-seal-bg);
+    }
+    .tlr .seal i {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--tlr-red); box-shadow: 0 0 10px var(--tlr-red); display: block;
+    }
+
+    .tlr .cover h1 {
+        font-family: var(--tlr-serif);
+        font-size: clamp(46px, 13vw, 68px);
+        line-height: 1.12; margin: 0 0 8px; font-weight: 700;
+        letter-spacing: .14em; text-indent: .14em;
+        background: var(--tlr-title-grad);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    .tlr .cover .sub {
+        font-family: var(--tlr-serif); font-size: 15px; color: var(--tlr-tx2);
+        letter-spacing: .24em; text-indent: .24em; margin: 0 0 30px;
+    }
+
+    .tlr .rule { display: flex; align-items: center; gap: 14px; justify-content: center; margin: 0 0 30px; }
+    .tlr .rule span { height: 1px; width: 52px; background: linear-gradient(90deg, transparent, var(--tlr-gold-d)); }
+    .tlr .rule span:last-child { background: linear-gradient(90deg, var(--tlr-gold-d), transparent); }
+    .tlr .rule em { font-style: normal; color: var(--tlr-gold); font-size: 13px; letter-spacing: .2em; }
+
+    .tlr .cover .lede {
+        font-family: var(--tlr-serif); font-size: 16.5px; line-height: 2.05; color: var(--tlr-tx-body);
+        text-align: left; margin: 0 auto 34px; max-width: 430px;
+    }
+    .tlr .cover .lede b { color: var(--tlr-red-l); font-weight: 600; }
+    .tlr .cover .lede .hl { color: var(--tlr-gold); }
+
+    .tlr .dims-mini { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 40px; }
+    .tlr .dims-mini span {
+        font-size: 12.5px; color: var(--tlr-tx2); border: 1px solid var(--tlr-line2);
+        border-radius: 100px; padding: 5px 13px; letter-spacing: .06em;
+    }
+
+    .tlr .btn {
+        appearance: none; border: none; cursor: pointer; font-family: var(--tlr-sans);
+        font-size: 16.5px; font-weight: 600; letter-spacing: .1em;
+        padding: 16px 46px; border-radius: 100px;
+        color: #1a1207;
+        background: linear-gradient(160deg, #f0dcae, #c9a961 55%, #a98a45);
+        box-shadow: 0 10px 30px -8px var(--tlr-glow), inset 0 1px 0 rgba(255, 255, 255, .4);
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .tlr .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 38px -8px var(--tlr-glow), inset 0 1px 0 rgba(255, 255, 255, .5);
+    }
+    .tlr .btn:active { transform: translateY(0) scale(.985); }
+
+    .tlr .btn.ghost {
+        background: transparent; color: var(--tlr-gold); border: 1px solid var(--tlr-line);
+        box-shadow: none; font-weight: 500; font-size: 14.5px; padding: 13px 30px;
+    }
+    .tlr .btn.ghost:hover {
+        border-color: var(--tlr-gold); background: var(--tlr-seal-bg); transform: translateY(-1px);
+    }
+
+    .tlr .foot-note {
+        /* 原版依赖浏览器对 <p> 的默认下边距（1em = 12.5px），全站有 * { margin:0 } 重置，故显式补回 */
+        margin: 30px 0 12.5px;
+        font-size: 12.5px; color: var(--tlr-tx3); line-height: 1.9; letter-spacing: .03em;
+    }
+    .tlr .foot-note em { font-style: normal; color: var(--tlr-jade); }
+
+    /* ============ 答题 ============ */
+    .tlr .quiz { padding-top: 34px; }
+
+    .tlr .qhead {
+        position: sticky; top: 0; z-index: 20;
+        background: linear-gradient(180deg, var(--tlr-bg-solid) 62%, transparent);
+        padding: 10px 0 16px; margin-bottom: 6px;
+    }
+    .tlr .qbar-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 11px; }
+    .tlr .qbar-row .cnt { font-size: 13px; color: var(--tlr-gold); letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+    .tlr .qbar-row .cnt b { font-size: 21px; font-family: var(--tlr-serif); color: var(--tlr-gold-l); margin-right: 2px; }
+    .tlr .qbar-row .cnt i { font-style: normal; color: var(--tlr-tx3); }
+    .tlr .qbar-row .dim { font-size: 12.5px; color: var(--tlr-tx3); letter-spacing: .14em; }
+
+    .tlr .qbar { height: 3px; border-radius: 3px; background: var(--tlr-track-bar); overflow: hidden; }
+    .tlr .qbar i {
+        display: block; height: 100%; width: 0; border-radius: 3px;
+        background: linear-gradient(90deg, var(--tlr-red), var(--tlr-gold));
+        transition: width .45s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .tlr .qbody { min-height: 392px; display: flex; flex-direction: column; justify-content: center; }
+
+    .tlr .qtext {
+        font-family: var(--tlr-serif); font-size: clamp(21px, 5.6vw, 25px); line-height: 1.72;
+        color: var(--tlr-tx-strong); margin: 0 0 34px; letter-spacing: .02em;
+    }
+    .tlr .qtext .qno {
+        display: block; font-size: 12px; color: var(--tlr-tx3); letter-spacing: .28em;
+        margin-bottom: 16px; font-family: var(--tlr-sans);
+    }
+
+    .tlr .opts { display: flex; flex-direction: column; gap: 10px; }
+    .tlr .opt {
+        display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+        background: var(--tlr-panel); border: 1px solid var(--tlr-line2); border-radius: 14px;
+        padding: 15px 17px; color: var(--tlr-tx2); font-size: 15.5px; font-family: var(--tlr-sans);
+        cursor: pointer; transition: all .16s ease; letter-spacing: .04em;
+    }
+    .tlr .opt .k {
+        flex: 0 0 25px; height: 25px; border-radius: 7px; display: grid; place-items: center;
+        font-size: 12px; color: var(--tlr-tx3); border: 1px solid var(--tlr-line2);
+        font-variant-numeric: tabular-nums; transition: all .16s ease;
+    }
+    .tlr .opt:hover { border-color: var(--tlr-gold); background: var(--tlr-panel2); color: var(--tlr-tx); }
+    .tlr .opt:hover .k { border-color: var(--tlr-gold); color: var(--tlr-gold); }
+    .tlr .opt.sel { border-color: var(--tlr-red); background: var(--tlr-sel-bg); color: var(--tlr-sel-tx); }
+    .tlr .opt.sel .k { background: var(--tlr-red); border-color: var(--tlr-red); color: #fff; }
+
+    .tlr .qfoot { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; min-height: 40px; }
+    .tlr .backbtn {
+        background: none; border: none; color: var(--tlr-tx3); font-size: 13.5px; cursor: pointer;
+        padding: 8px 2px; letter-spacing: .08em; font-family: var(--tlr-sans); transition: color .16s;
+    }
+    .tlr .backbtn:hover { color: var(--tlr-gold); }
+    .tlr .hint { font-size: 12px; color: var(--tlr-tx3); letter-spacing: .06em; }
+
+    .tlr .q-enter { animation: tlrQin .34s cubic-bezier(.2, .7, .3, 1) both; }
+    @keyframes tlrQin  { from { opacity: 0; transform: translateX(18px); }  to { opacity: 1; transform: none; } }
+    .tlr .q-enter.rev { animation: tlrQinR .34s cubic-bezier(.2, .7, .3, 1) both; }
+    @keyframes tlrQinR { from { opacity: 0; transform: translateX(-18px); } to { opacity: 1; transform: none; } }
+
+    /* ============ 计算中 ============ */
+    .tlr .loading {
+        position: fixed; inset: 0; z-index: 60;
+        background: var(--tlr-overlay); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        display: none; place-items: center; text-align: center;
+    }
+    .tlr .loading.on { display: grid; }
+    .tlr .loading .ring {
+        width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 26px;
+        border: 1px solid var(--tlr-line); border-top-color: var(--tlr-gold);
+        animation: tlrSpin 1.05s linear infinite;
+    }
+    @keyframes tlrSpin { to { transform: rotate(360deg); } }
+    .tlr .loading p { font-family: var(--tlr-serif); color: var(--tlr-tx2); font-size: 15px; letter-spacing: .16em; margin: 0; }
+
+    /* ============ 结果 ============ */
+    .tlr .res { padding-top: 26px; }
+    .tlr .res-hero { text-align: center; padding: 8px 0 30px; }
+    .tlr .res-hero .eyebrow { font-size: 12.5px; color: var(--tlr-tx3); letter-spacing: .3em; margin-bottom: 20px; }
+    .tlr .res-hero .matchname {
+        font-family: var(--tlr-serif); font-size: clamp(42px, 12vw, 58px); line-height: 1.1;
+        letter-spacing: .1em; text-indent: .1em; margin: 0 0 14px;
+        background: var(--tlr-matchname-grad);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .tlr .res-hero .m-life { font-size: 13px; color: var(--tlr-tx3); letter-spacing: .16em; margin-bottom: 22px; }
+
+    .tlr .score-wrap { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin-bottom: 6px; }
+    .tlr .score-num { font-family: var(--tlr-serif); font-size: 52px; line-height: 1; color: var(--tlr-red-l); font-variant-numeric: tabular-nums; }
+    .tlr .score-num small { font-size: 20px; color: var(--tlr-tx3); margin-left: 2px; }
+    .tlr .score-lab { font-size: 13px; color: var(--tlr-tx3); letter-spacing: .14em; }
+
+    .tlr .res-hero .mtitle {
+        display: inline-block; margin-top: 20px; font-family: var(--tlr-kai);
+        font-size: 19px; color: var(--tlr-gold); letter-spacing: .1em;
+        border-top: 1px solid var(--tlr-line); border-bottom: 1px solid var(--tlr-line); padding: 9px 20px;
+    }
+    .tlr .balance-note {
+        max-width: 400px; margin: 22px auto 0; font-size: 13.5px; color: var(--tlr-tx2);
+        line-height: 1.9; text-align: left; border-left: 2px solid var(--tlr-line); padding-left: 14px;
+    }
+
+    .tlr .card {
+        background: var(--tlr-card-grad);
+        border: 1px solid var(--tlr-line2); border-radius: 18px; padding: 24px 22px; margin-bottom: 18px;
+        position: relative; overflow: hidden;
+    }
+    .tlr .card.accent { border-color: var(--tlr-line); }
+    .tlr .card.accent::after {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+        background: linear-gradient(180deg, transparent, var(--tlr-red), transparent);
+    }
+    .tlr .sec-title {
+        display: flex; align-items: center; gap: 11px; margin: 0 0 18px;
+        font-size: 13px; color: var(--tlr-gold); letter-spacing: .24em; font-weight: 500;
+    }
+    .tlr .sec-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--tlr-line), transparent); }
+    .tlr .card p { margin: 0 0 14px; color: var(--tlr-tx-body); font-size: 15.5px; line-height: 2; }
+    .tlr .card p:last-child { margin-bottom: 0; }
+
+    .tlr .kv { margin-bottom: 17px; }
+    .tlr .kv:last-child { margin-bottom: 0; }
+    .tlr .kv .k {
+        font-size: 12.5px; color: var(--tlr-tx3); letter-spacing: .18em; margin-bottom: 7px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .tlr .kv .k::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--tlr-gold); }
+    .tlr .kv .v { font-size: 15.5px; color: var(--tlr-tx-body); line-height: 1.95; }
+
+    .tlr .quote {
+        font-family: var(--tlr-kai); font-size: 18.5px; line-height: 1.95; color: var(--tlr-quote);
+        border-left: 2px solid var(--tlr-gold); padding: 4px 0 4px 18px; margin: 0; letter-spacing: .03em;
+    }
+
+    .tlr .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .tlr .tags span {
+        font-size: 12px; color: var(--tlr-gold); background: var(--tlr-tag-bg);
+        border: 1px solid var(--tlr-tag-bd); border-radius: 100px; padding: 4px 12px; letter-spacing: .08em;
+    }
+
+    /* 雷达图 */
+    .tlr .radar-box { display: flex; justify-content: center; padding: 6px 0 2px; }
+    .tlr .radar-box svg { width: 100%; max-width: 340px; height: auto; overflow: visible; }
+    .tlr .radar-box .ring  { fill: none; stroke: var(--tlr-grid); stroke-width: 1; }
+    .tlr .radar-box .ring.outer { stroke: var(--tlr-grid-strong); }
+    .tlr .radar-box .spoke { stroke: var(--tlr-grid); stroke-width: 1; }
+    .tlr .radar-box .rlabel { fill: var(--tlr-tx2); font-size: 12px; letter-spacing: 1px; font-family: inherit; }
+    .tlr .radar-box .r-user { fill: var(--tlr-user-fill); stroke: var(--tlr-red); stroke-width: 2; }
+    .tlr .radar-box .r-fig  { fill: none; stroke: var(--tlr-gold); stroke-width: 1.5; stroke-dasharray: 5 4; }
+
+    .tlr .rlegend { display: flex; justify-content: center; gap: 24px; margin-top: 12px; font-size: 12px; color: var(--tlr-tx3); letter-spacing: .1em; }
+    .tlr .rlegend i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; vertical-align: middle; }
+    .tlr .rlegend i.dash {
+        width: 15px; height: 0; border-top: 2px dashed var(--tlr-gold);
+        border-radius: 0; background: none; margin-bottom: 3px;
+    }
+
+    /* 维度条 */
+    .tlr .dimrow { display: grid; grid-template-columns: 1fr; gap: 15px; }
+    .tlr .dimitem .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .tlr .dimitem .nm { font-size: 14.5px; color: var(--tlr-tx); letter-spacing: .1em; }
+    .tlr .dimitem .nm em { font-style: normal; font-family: var(--tlr-serif); font-size: 16px; color: var(--tlr-gold-l); margin-left: 8px; }
+    .tlr .dimitem .nm em.mid { color: var(--tlr-tx3); font-size: 13px; }
+    .tlr .dimitem .vl { font-size: 12px; color: var(--tlr-tx3); letter-spacing: .1em; font-variant-numeric: tabular-nums; }
+
+    .tlr .track { height: 6px; border-radius: 6px; background: var(--tlr-track); position: relative; overflow: hidden; }
+    .tlr .track .fill {
+        position: absolute; left: 0; top: 0; bottom: 0; border-radius: 6px; width: 0;
+        background: var(--tlr-fill-grad);
+        transition: width .9s cubic-bezier(.2, .7, .3, 1);
+    }
+    .tlr .track .mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--tlr-track-mid); }
+    .tlr .poles { display: flex; justify-content: space-between; margin-top: 7px; font-size: 11.5px; color: var(--tlr-tx3); letter-spacing: .08em; }
+    .tlr .poles b { font-weight: 500; color: var(--tlr-tx2); }
+
+    /* 共鸣 */
+    .tlr .reso { display: flex; flex-direction: column; gap: 12px; }
+    .tlr .reso-item { display: flex; gap: 13px; align-items: flex-start; }
+    .tlr .reso-item .dot {
+        flex: 0 0 auto; margin-top: 7px; width: 7px; height: 7px; border-radius: 50%;
+        background: var(--tlr-red); box-shadow: 0 0 10px var(--tlr-red);
+    }
+    .tlr .reso-item .t { font-size: 15px; color: var(--tlr-tx-body); line-height: 1.85; }
+    .tlr .reso-item .t b { color: var(--tlr-gold); font-weight: 600; font-family: var(--tlr-serif); font-size: 16px; }
+
+    /* 其他同频者 */
+    .tlr .alt { display: flex; align-items: center; gap: 14px; padding: 13px 0; border-bottom: 1px solid var(--tlr-line2); cursor: default; }
+    .tlr .alt:last-child { border-bottom: none; padding-bottom: 0; }
+    .tlr .alt .an { font-family: var(--tlr-serif); font-size: 19px; color: var(--tlr-alt-name); letter-spacing: .08em; flex: 0 0 auto; min-width: 78px; }
+    .tlr .alt .am { flex: 1; min-width: 0; }
+    /* 原实现里 .ar / .ab 是行内 <span>，而 height、margin-bottom、overflow 对行内元素无效，
+       导致「其他同频者」的契合度进度条实际不显示（原版页面同样如此）。
+       补 display:block 让原设计中的进度条真正生效。若要严格复刻原版观感，删掉这两行即可。 */
+    .tlr .alt .am .ar {
+        display: block;
+        font-size: 12.5px; color: var(--tlr-tx3); letter-spacing: .06em; margin-bottom: 5px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .tlr .alt .am .ab { display: block; }
+    .tlr .alt .am .ab { height: 3px; border-radius: 3px; background: var(--tlr-track); overflow: hidden; }
+    .tlr .alt .am .ab i {
+        display: block; height: 100%; width: 0;
+        background: linear-gradient(90deg, var(--tlr-gold-d), var(--tlr-gold));
+        transition: width .9s cubic-bezier(.2, .7, .3, 1);
+    }
+    .tlr .alt .as { font-size: 14px; color: var(--tlr-gold); font-variant-numeric: tabular-nums; flex: 0 0 auto; font-family: var(--tlr-serif); }
+
+    /* 说明书 */
+    .tlr .man-grid { display: grid; gap: 11px; }
+    .tlr .man-row { display: flex; gap: 12px; align-items: flex-start; }
+    .tlr .man-row .ico {
+        flex: 0 0 auto; width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center;
+        font-size: 11px; margin-top: 3px;
+    }
+    .tlr .man-row.good .ico { background: var(--tlr-ico-good-bg); color: var(--tlr-gold); border: 1px solid var(--tlr-ico-good-bd); }
+    .tlr .man-row.warn .ico { background: var(--tlr-ico-warn-bg); color: var(--tlr-red-l); border: 1px solid var(--tlr-ico-warn-bd); }
+    .tlr .man-row .tx { font-size: 15px; color: var(--tlr-tx-body); line-height: 1.9; }
+    .tlr .man-row .tx b { color: var(--tlr-tx); font-weight: 600; }
+    .tlr .man-row .tx em { font-style: normal; color: var(--tlr-tx2); }
+
+    .tlr .res-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 30px 0 12px; }
+
+    .tlr .toast {
+        position: fixed; left: 50%; bottom: 40px; transform: translate(-50%, 20px);
+        background: var(--tlr-toast-bg); border: 1px solid var(--tlr-line); color: var(--tlr-tx);
+        padding: 11px 22px; border-radius: 100px; font-size: 13.5px; letter-spacing: .06em;
+        opacity: 0; pointer-events: none; transition: all .3s ease; z-index: 99;
+        max-width: calc(100vw - 40px); text-align: center;
+    }
+    .tlr .toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+    .tlr .reveal { opacity: 0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; }
+    .tlr .reveal.in { opacity: 1; transform: none; }
+
+    @media (max-width: 420px) {
+        .tlr .wrap { padding: 0 17px 44px; }
+        .tlr .card { padding: 21px 18px; }
+        .tlr .alt .an { min-width: 64px; font-size: 17px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .tlr .screen,
+        .tlr .q-enter,
+        .tlr .q-enter.rev,
+        .tlr .loading .ring { animation: none; }
+    }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="profile">
+                <div class="profile-avatar">👨‍💻</div>
+                <p class="profile-name">汪泉</p>
+                <p class="profile-desc">一个记录者而已......</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="../index.html">🏠 首页</a>
+                <a href="../posts.html">📝 文章</a>
+                <a href="tools.html" class="active">🧰 工具</a>
+                <a href="../about.html">🙋 关于</a>
+            </nav>
+
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">主题</h3>
+                <button id="theme-toggle" class="theme-btn" title="切换主题" aria-label="切换主题">🌙 切换深色模式</button>
+            </div>
+
+            <div class="sidebar-footer">
+                <p>© 2026 WangQuan</p>
+                <p>Powered by Cloudflare Pages</p>
+            </div>
+        </aside>
+
+        <main class="main">
+            <div class="container tool-page human-page">
+                <div class="tool-header">
+                    <h2>同路人 · 人格测试</h2>
+                    <p>24 道题、六个维度，从史册四十位人物里找出与你同频的那一个。全部计算在浏览器本地完成。</p>
+                </div>
+
+                <div class="tlr">
+                    <div class="wrap">
+
+                        <!-- ========== 封面 ========== -->
+                        <section class="screen on cover" id="scr-cover">
+                            <div class="seal"><i></i>性格坐标 · 史册对照</div>
+                            <h1>同路人</h1>
+                            <p class="sub">史册里有一个和你同频的人</p>
+                            <div class="rule"><span></span><em>六 维 · 四 十 人</em><span></span></div>
+                            <p class="lede">
+                                让人灰心的，常常不是能力不够。<br>
+                                而是你一直在付出，却迟迟看不到结果，于是开始怀疑——<b>是不是我这种性格，本来就不适合这条路。</b><br>
+                                可史册里那些走长路的人，恰恰是靠着一两处"不讨喜"的地方，撑过了低谷。<br>
+                                有人因为敏锐，先看见了别人没在意的隐患；有人因为迟缓，避开了仓促决定的失误；有人因为倔，守住了后来才被证明重要的那条线。<br>
+                                <span class="hl">你的性格不是束缚，它只是暂时还没找到坐标。</span>
+                            </p>
+                            <div class="dims-mini">
+                                <span>觉察</span><span>决断</span><span>持守</span><span>气象</span><span>心志</span><span>行止</span>
+                            </div>
+                            <button class="btn" id="btn-start" type="button">开始对照 · 24 题</button>
+                            <p class="foot-note">
+                                约 4 分钟 · 没有对错，按第一反应选<br>
+                                <em>全部计算在你的浏览器里完成，不联网、不上传、不留记录</em>
+                            </p>
+                        </section>
+
+                        <!-- ========== 答题 ========== -->
+                        <section class="screen quiz" id="scr-quiz">
+                            <div class="qhead">
+                                <div class="qbar-row">
+                                    <div class="cnt"><b id="q-idx">1</b><i> / 24 问</i></div>
+                                    <div class="dim" id="q-dim">觉察</div>
+                                </div>
+                                <div class="qbar"><i id="q-prog"></i></div>
+                            </div>
+                            <div class="qbody" id="q-body">
+                                <p class="qtext"><span class="qno" id="q-no">第 1 问</span><span id="q-text"></span></p>
+                                <div class="opts" id="q-opts"></div>
+                            </div>
+                            <div class="qfoot">
+                                <button class="backbtn" id="btn-back" type="button">← 上一题</button>
+                                <span class="hint">可用键盘 1 – 5</span>
+                            </div>
+                        </section>
+
+                        <!-- ========== 结果 ========== -->
+                        <section class="screen res" id="scr-res"></section>
+                    </div>
+
+                    <div class="loading" id="loading">
+                        <div>
+                            <div class="ring"></div>
+                            <p id="load-txt">正在比对史册…</p>
+                        </div>
+                    </div>
+                    <div class="toast" id="toast"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/human-test.js"></script>
+</body>
+</html>
